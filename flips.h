@@ -1,4 +1,4 @@
-//Module name: Floating IPS, header for all frontends
+﻿//Module name: Floating IPS, header for all frontends
 //Author: Alcaro
 //Date: See Git history
 //Licence: GPL v3.0 or higher
@@ -34,7 +34,7 @@
 //#define EXTERN_C
 //#endif
 
-#define flipsversion "Floating IPS"
+#define flipsversion "FLIPeda\xE7"
 
 
 #if defined(FLIPS_WINDOWS)
@@ -249,7 +249,7 @@ struct errorinfo CreatePatchToMem(LPCWSTR inromname, LPCWSTR outromname, enum pa
 struct errorinfo CreatePatch(LPCWSTR inromname, LPCWSTR outromname, enum patchtype patchtype,
                              struct manifestinfo * manifestinfo, LPCWSTR patchname);
 
-extern char bpsdProgStr[24];
+extern char bpsdProgStr[26];
 extern int bpsdLastPromille;
 bool bpsdeltaGetProgress(size_t done, size_t total);
 

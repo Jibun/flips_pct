@@ -1,4 +1,4 @@
-//Module name: Floating IPS, Windows frontend
+﻿//Module name: Floating IPS, Windows frontend
 //Author: Alcaro
 //Date: See Git history
 //Licence: GPL v3.0 or higher
@@ -181,7 +181,7 @@ bool SelectRom(LPWSTR filename, LPCWSTR title, bool output)
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize=sizeof(ofn);
 	ofn.hwndOwner=hwndMain;
-	ofn.lpstrFilter=TEXT("Most Common ROM Files\0*.smc;*.sfc;*.nes;*.gb;*.gbc;*.gba;*.nds;*.vb;*.sms;*.smd;*.md;*.ngp;*.n64;*.z64\0All Files (*.*)\0*.*\0");
+	ofn.lpstrFilter=TEXT("Fitxers de ROM m\xE9s comuns\0*.smc;*.sfc;*.nes;*.gb;*.gbc;*.gba;*.nds;*.vb;*.sms;*.smd;*.md;*.ngp;*.n64;*.z64\0Tots els fitxers (*.*)\0*.*\0");
 	ofn.lpstrFile=filename;
 	ofn.nMaxFile=MAX_PATH;
 	ofn.nFilterIndex=state.lastRomType;
@@ -225,10 +225,10 @@ int a_ApplyPatch(LPCWSTR clipatchname)
 		ZeroMemory(&ofn, sizeof(ofn));
 		ofn.lStructSize=sizeof(ofn);
 		ofn.hwndOwner=hwndMain;
-		ofn.lpstrFilter=TEXT("All supported patches (*.ips, *.bps)\0*.ips;*.bps;*.ups\0All files (*.*)\0*.*\0");
+		ofn.lpstrFilter=TEXT("Tots els peda\xE7os suportats (*.ips, *.bps)\0*.ips;*.bps;*.ups\0Tots els fitxers (*.*)\0*.*\0");
 		ofn.lpstrFile=patchnames;
 		ofn.nMaxFile=65535;
-		ofn.lpstrTitle=TEXT("Select Patches to Use");
+		ofn.lpstrTitle=TEXT("Seleccioneu els peda\xE7os a emprar");
 		ofn.Flags=OFN_HIDEREADONLY|OFN_FILEMUSTEXIST|OFN_PATHMUSTEXIST|OFN_ALLOWMULTISELECT|OFN_EXPLORER;
 		ofn.lpstrDefExt=patchextensions[state.lastPatchType];
 		if (!GetOpenFileName(&ofn)) return 0;
@@ -250,7 +250,7 @@ int a_ApplyPatch(LPCWSTR clipatchname)
 		{
 			inromname=inromname_buf;
 			inromname_buf[0]='\0';
-			if (!SelectRom(inromname_buf, TEXT("Select File to Patch"), false)) goto cancel;
+			if (!SelectRom(inromname_buf, TEXT("Seleccioneu el fitxer a aplicar el peda\xE7"), false)) goto cancel;
 		}
 		WCHAR outromname[MAX_PATH];
 		wcscpy(outromname, inromname);
@@ -263,7 +263,7 @@ int a_ApplyPatch(LPCWSTR clipatchname)
 			LPWSTR inromext=GetExtension(inromname);
 			if (*inromext && *outromext) wcscpy(outromext, inromext);
 		}
-		if (!SelectRom(outromname, TEXT("Select Output File"), true)) goto cancel;
+		if (!SelectRom(outromname, TEXT("Seleccioneu el fitxer de sortida"), true)) goto cancel;
 		struct errorinfo errinf=ApplyPatchMem(patch, inromname, true, outromname, NULL, state.enableAutoRomSelector);
 		delete patch;
 		MessageBoxA(hwndMain, errinf.description, flipsversion, mboxtype[errinf.level]);
@@ -287,14 +287,14 @@ int a_ApplyPatch(LPCWSTR clipatchname)
 			bool anySuccess=false;
 			enum { e_none, e_notice, e_warning, e_invalid, e_io_rom_write, e_io_rom_read, e_no_auto, e_io_read_patch } worsterror=e_none;
 			LPCSTR messages[8]={
-					"The patches were applied successfully!",//e_none
-					"The patches were applied successfully!",//e_notice (ignore)
-					"The patches were applied, but one or more may be mangled or improperly created...",//e_warning
-					"Some patches were applied, but not all of the given patches are valid...",//e_invalid
-					"Some patches were applied, but not all of the desired ROMs could be created...",//e_rom_io_write
-					"Some patches were applied, but not all of the input ROMs could be read...",//e_io_rom_read
-					"Some patches were applied, but not all of the required input ROMs could be located...",//e_no_auto
-					"Some patches were applied, but not all of the given patches could be read...",//e_io_read_patch
+					"Els peda\xE7os s'han aplicat correctament!",//e_none
+					"Els peda\xE7os s'han aplicat correctament!",//e_notice (ignore)
+					"Els peda\xE7os s'han aplicat, per\xF2 un o m\xE9s d'aquests pot estar malm\xE8s o pot haver estat creat incorrectament...",//e_warning
+					"Alguns peda\xE7os s'han aplicat, per\xF2 altres no s\xF3n v\xE0lids...",//e_invalid
+					"Alguns peda\xE7os s'han aplicat, per\xF2 no s'han pogut a aplicar a totes les ROMs...",//e_rom_io_write
+					"Alguns peda\xE7os s'han aplicat, per\xF2 no totes les ROM s'han pogut llegir...",//e_io_rom_read
+					"Alguns peda\xE7os s'han aplicat, per\xF2 no totes les ROM s'han pogut localitzar...",//e_no_auto
+					"Alguns peda\xE7os s'han aplicat, per\xF2 no tots s'han pogut llegir...",//e_io_read_patch
 				};
 			
 			wcscpy(thisFileNameWithPath, patchnames);
@@ -360,7 +360,7 @@ int a_ApplyPatch(LPCWSTR clipatchname)
 		}
 		WCHAR inromname[MAX_PATH];
 		inromname[0]='\0';
-		if (!SelectRom(inromname, TEXT("Select Base File"), false)) return 0;
+		if (!SelectRom(inromname, TEXT("Seleccioneu el fitxer base"), false)) return 0;
 		WCHAR thisFileNameWithPath[MAX_PATH];
 		wcscpy(thisFileNameWithPath, patchnames);
 		LPWSTR thisFileName=wcschr(thisFileNameWithPath, '\0');
@@ -382,20 +382,20 @@ int a_ApplyPatch(LPCWSTR clipatchname)
 					NULL,//e_none
 					NULL,//e_notice
 					NULL,//e_warning
-					"None of these are valid patches for this ROM!",//e_invalid_this
-					"None of these are valid patches!",//e_invalid
-					"Couldn't write any ROMs. Are you on a read-only medium?",//e_io_write
-					"Couldn't read any patches. What exactly are you doing?",//e_io_read
-					"Couldn't read the input ROM. What exactly are you doing?",//e_io_read_rom
+					"Cap d'aquests peda\xE7os \xE9s v\xE0lid per a aquesta ROM!",//e_invalid_this
+					"Cap d'aquests fitxers s\xF3n peda\xE7os v\xE0lids!",//e_invalid
+					"No s'han pogut escriure les ROMs. Esteu en un suport de nom\xE9s lectura?",//e_io_write
+					"No s'ha pogut llegir cap peda\xE7. Qu\xE8 esteu fent exactament?",//e_io_read
+					"Couldn't read the input ROM. Qu\xE8 esteu fent exactament?",//e_io_read_rom
 				},{
 					//at least one error-free
-					"The patches were applied successfully!",//e_none
-					"The patches were applied successfully!",//e_notice
-					"The patches were applied, but one or more may be mangled or improperly created...",//e_warning
-					"Some patches were applied, but not all of the given patches are valid for this ROM...",//e_invalid_this
-					"Some patches were applied, but not all of the given patches are valid...",//e_invalid
-					"Some patches were applied, but not all of the desired ROMs could be created...",//e_io_write
-					"Some patches were applied, but not all of the given patches could be read...",//e_io_read
+					"Els peda\xE7os s'han aplicat correctament!",//e_none
+					"Els peda\xE7os s'han aplicat correctament!",//e_notice
+					"Els peda\xE7os s'han aplicat, per\xF2 un o m\xE9s d'aquests pot estar malm\xE8s o pot haver estat creat incorrectament...",//e_warning
+					"Alguns peda\xE7os s'han aplicat, per\xF2 cap dels peda\xE7os \xE9s apte per a aquesta ROM...",//e_invalid_this
+					"Alguns peda\xE7os s'han aplicat, per\xF2 cap dels peda\xE7os \xE9s v\xE0lid...",//e_invalid
+					"Alguns peda\xE7os s'han aplicat, per\xF2 no s'ha pogut crear cap ROM...",//e_io_write
+					"Alguns peda\xE7os s'han aplicat, per\xF2 no s'ha pogut llegir cap d'aquests...",//e_io_read
 					NULL,//e_io_read_rom
 				},
 			};
@@ -442,12 +442,12 @@ void a_CreatePatch()
 	
 	romnames[0][0]='\0';
 	romnames[1][0]='\0';
-	if (!SelectRom(romnames[0], TEXT("Select ORIGINAL UNMODIFIED File to Use"), false)) return;
-	if (!SelectRom(romnames[1], TEXT("Select NEW MODIFIED File to Use"), false)) return;
+	if (!SelectRom(romnames[0], TEXT("Seleccioneu el fitxer ORIGINAL, NO MODIFICAT a emprar"), false)) return;
+	if (!SelectRom(romnames[1], TEXT("Seleccioneu el fitxer NOU A MODIFICAR"), false)) return;
 	
 	if (!wcsicmp(romnames[0], romnames[1]))
 	{
-		MessageBoxA(hwndMain, "That's the same file! You should really use two different files.", flipsversion, mboxtype[el_broken]);
+		MessageBoxA(hwndMain, "S\xF3n el mateix fitxer! Haurieu d'emprar dos de diferents.", flipsversion, mboxtype[el_broken]);
 		return;
 	}
 	
@@ -460,13 +460,13 @@ void a_CreatePatch()
 	ofn.lStructSize=sizeof(ofn);
 	ofn.hwndOwner=hwndMain;
 	ofn.lpstrFilter =
-		TEXT("BPS Patch File (*.bps)\0*.bps\0")
+		TEXT("Fitxer de peda\xE7 BPS (*.bps)\0*.bps\0")
 		//TEXT("BPS Patch File (Favor Creation Speed) (*.bps)\0*.bps\0")
-		TEXT("IPS Patch File (*.ips)\0*.ips\0");
+		TEXT("Fitxer de peda\xE7 IPS (*.ips)\0*.ips\0");
 	ofn.lpstrFile=patchname;
 	ofn.nMaxFile=MAX_PATH;
 	ofn.nFilterIndex=state.lastPatchType;
-	ofn.lpstrTitle=TEXT("Select File to Save As");
+	ofn.lpstrTitle=TEXT("Seleccioneu com es desar\xE0 el fitxer");
 	ofn.Flags=OFN_HIDEREADONLY|OFN_FILEMUSTEXIST|OFN_PATHMUSTEXIST|OFN_OVERWRITEPROMPT;
 	ofn.lpstrDefExt=patchextensions[state.lastPatchType];
 	if (!GetSaveFileName(&ofn))
@@ -489,10 +489,10 @@ bool a_SetEmulator()
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize=sizeof(ofn);
 	ofn.hwndOwner=hwndMain;
-	ofn.lpstrFilter=TEXT("Emulator Files (*.exe)\0*.exe\0All files (*.*)\0*.*\0");
+	ofn.lpstrFilter=TEXT("Fitxers d'emulador (*.exe)\0*.exe\0Tots els fitxers (*.*)\0*.*\0");
 	ofn.lpstrFile=newemupath;
 	ofn.nMaxFile=MAX_PATH;
-	ofn.lpstrTitle=TEXT("Select Emulator to Use");
+	ofn.lpstrTitle=TEXT("Seleccioneu l'emulador a fer servir");
 	ofn.Flags=OFN_HIDEREADONLY|OFN_FILEMUSTEXIST|OFN_PATHMUSTEXIST;
 	ofn.lpstrDefExt=TEXT("exe");
 	if (!GetOpenFileName(&ofn)) return false;
@@ -517,10 +517,10 @@ int a_ApplyRun(LPCWSTR clipatchname)
 		ZeroMemory(&ofn, sizeof(ofn));
 		ofn.lStructSize=sizeof(ofn);
 		ofn.hwndOwner=hwndMain;
-		ofn.lpstrFilter=TEXT("All supported patches (*.bps, *.ips)\0*.bps;*.ips;*.ups\0All files (*.*)\0*.*\0");
+		ofn.lpstrFilter=TEXT("Tots els peda\xE7os suportats (*.bps, *.ips)\0*.bps;*.ips;*.ups\0Tots els fitxers (*.*)\0*.*\0");
 		ofn.lpstrFile=patchpath;
 		ofn.nMaxFile=MAX_PATH;
-		ofn.lpstrTitle=TEXT("Select Patch to Use");
+		ofn.lpstrTitle=TEXT("Seleccioneu els peda\xE7os a emprar");
 		ofn.Flags=OFN_HIDEREADONLY|OFN_FILEMUSTEXIST|OFN_PATHMUSTEXIST;
 		ofn.lpstrDefExt=TEXT("bps");
 		if (!GetOpenFileName(&ofn)) return 0;
@@ -530,7 +530,7 @@ int a_ApplyRun(LPCWSTR clipatchname)
 	file* patch = file::create(patchpath);
 	if (!patch)
 	{
-		errinf=error(el_broken, "Couldn't read input patch. What exactly are you doing?");
+		errinf=error(el_broken, "El peda\xE7 d'origen no s'ha pogut llegir. Exactament, qu\xE8 esteu fent?");
 		goto error;
 	}
 	
@@ -541,7 +541,7 @@ int a_ApplyRun(LPCWSTR clipatchname)
 	if (!romname)
 	{
 		romname_base[0]='\0';
-		if (!SelectRom(romname_base, TEXT("Select Base File"), false))
+		if (!SelectRom(romname_base, TEXT("Seleccioneu el fitxer base"), false))
 		{
 			delete patch;
 			return 0;
@@ -585,7 +585,7 @@ error:
 	PROCESS_INFORMATION processinformation;
 	if (!CreateProcess(NULL, cmdline, NULL, NULL, FALSE, 0, NULL, patchpath, &startupinfo, &processinformation))
 	{
-		MessageBoxA(hwndMain, "Couldn't open emulator.", flipsversion, mboxtype[el_broken]);
+		MessageBoxA(hwndMain, "No s'ha pogut obrir l'emulador.", flipsversion, mboxtype[el_broken]);
 		//DeleteFile(tempfilename);
 		return el_broken;
 	}
@@ -616,12 +616,12 @@ void a_ShowSettings()
 	hwndSettings=CreateWindowA(
 		"floatingmunchers", flipsversion,
 		WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|WS_BORDER|WS_MINIMIZEBOX,
-		CW_USEDEFAULT, CW_USEDEFAULT, 3+6+202+6+3, 21 + 6+23+6+23+3+13+1+17+4+17+6 + 3, NULL, NULL, GetModuleHandle(NULL), NULL);
+		CW_USEDEFAULT, CW_USEDEFAULT, 3+6+247+6+3, 21 + 6+23+6+23+3+13+1+17+4+17+6 + 3, NULL, NULL, GetModuleHandle(NULL), NULL);
 	
 	HFONT hfont=(HFONT)GetStockObject(DEFAULT_GUI_FONT);
 	HWND item;
 	
-	int x=6;
+	int x=28;
 	int y=6;
 	int lineheight;
 	
@@ -654,24 +654,24 @@ void a_ShowSettings()
 	widget(WC_BUTTONA, BS_AUTOCHECKBOX, text, w, h, action)
 	
 	line(23);
-	firstbutton("Select emulator", 202/*94*/, 23, 101);
+	firstbutton("Seleccioneu l'emulador", 202/*94*/, 23, 101);
 	endline(6);
 	
 	line(23);
-	button("Assign file types", 98, 23, 102); assocButton=item;
-	labelL("(can not be undone)", 98, 13, 0); assocText=item;
+	button("Assigna tipus fitxer", 98, 23, 102); assocButton=item;
+	labelL("(no es pot desfer)", 98, 13, 0); assocText=item;
 	endline(3);
 	
 	line(13);
-	labelC("When opening through associations:", 175, 13, 0);
+	labelC("Per a l'obertura amb la seva associaci\xF3:", 175, 13, 0);
 	endline(1);
 	line(17);
-	radio("Create ROM", 79, 17, 103); Button_SetCheck(item, (state.openInEmulatorOnAssoc==false));
-	radio("Run in emulator", 95, 17, 104); Button_SetCheck(item, (state.openInEmulatorOnAssoc==true));
+	radio("Crea la ROM", 79, 17, 103); Button_SetCheck(item, (state.openInEmulatorOnAssoc==false));
+	radio("Corre a l'emulador", 100, 17, 104); Button_SetCheck(item, (state.openInEmulatorOnAssoc==true));
 	endline(4);
 	
 	line(17);
-	check("Enable automatic ROM selector", 202, 17, 105); Button_SetCheck(item, (state.enableAutoRomSelector));
+	check("Activa el selector autom\xE0tic de ROM", 202, 17, 105); Button_SetCheck(item, (state.enableAutoRomSelector));
 	endline(3);
 	
 	ShowWindow(hwndSettings, SW_SHOW);
@@ -687,7 +687,7 @@ void key_core(bool checkonly, LPCWSTR path, LPCWSTR value, bool * p_hasExts, boo
 	HKEY hkey;
 	DWORD type;
 	WCHAR truepath[60];
-	wcscpy(truepath, TEXT("Software\\Classes\\"));
+	wcscpy(truepath, TEXT("Programari\\Classes\\"));
 	wcscat(truepath, path);
 	WCHAR regval[MAX_PATH+30];
 	DWORD regvallen;
@@ -735,14 +735,14 @@ void a_AssignFileTypes(bool checkonly)
 			key_core(checkonly, TEXT(path), NULL, &hasExts, &refresh)
 	
 	key(".ips", "FloatingIPSFileIPS");
-	key("FloatingIPSFileIPS", "Floating IPS File");
+	key("FloatingIPSFileIPS", "Fitxer Floating IPS");
 	key_path("FloatingIPSFileIPS\\DefaultIcon", ",1");
 	key_touch("FloatingIPSFileIPS\\shell");
 	key_touch("FloatingIPSFileIPS\\shell\\open");
 	key_path("FloatingIPSFileIPS\\shell\\open\\command", " \"%1\"");
 	
 	key(".bps", "FloatingIPSFileBPS");
-	key("FloatingIPSFileBPS", "Floating IPS File");
+	key("FloatingIPSFileBPS", "Fitxer Floating IPS");
 	key_path("FloatingIPSFileBPS\\DefaultIcon", ",2");
 	key_touch("FloatingIPSFileBPS\\shell");
 	key_touch("FloatingIPSFileBPS\\shell\\open");
@@ -761,7 +761,7 @@ void a_AssignFileTypes(bool checkonly)
 	}
 	if (!checkonly || hasExts)
 	{
-		SetWindowText(assocText, TEXT("(already done)"));
+		SetWindowText(assocText, TEXT("(ja fet)"));
 		Button_Enable(assocButton, false);
 	}
 }
@@ -835,7 +835,7 @@ int ShowMainWindow(HINSTANCE hInstance, int nCmdShow)
 	hwndMain=CreateWindowA(
 				"floatingmunchers", flipsversion,
 				WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|WS_BORDER|WS_MINIMIZEBOX,
-				state.windowleft, state.windowtop, 204, 93, NULL, NULL, GetModuleHandle(NULL), NULL);
+				state.windowleft, state.windowtop, 244, 93, NULL, NULL, GetModuleHandle(NULL), NULL);
 	
 	HFONT hfont=try_create_font("Segoe UI", 9);
 	if (!hfont) hfont=try_create_font("MS Shell Dlg 2", 8);
@@ -850,10 +850,10 @@ int ShowMainWindow(HINSTANCE hInstance, int nCmdShow)
 			SendMessage(lastbutton, WM_SETFONT, (WPARAM)hfont, 0); \
 			buttonid++; \
 		} while(0)
-	button(6,  6,  90/*77*/,23, "Apply Patch"); SetActiveWindow(lastbutton);
-	button(104,6,  90/*83*/,23, "Create Patch");
-	button(6,  37, 90/*90*/,23, "Apply and Run");
-	button(104,37, 90/*59*/,23, "Settings");
+	button(6,  6,  100/*77*/,23, "Aplica peda\xE7"); SetActiveWindow(lastbutton);
+	button(124,6,  100/*83*/,23, "Crea peda\xE7");
+	button(6,  37, 100/*90*/,23, "Aplica i c\xF3rrer");
+	button(124,37, 100/*59*/,23, "Par\xE0metres");
 	
 	ShowWindow(hwndMain, nCmdShow);
 	

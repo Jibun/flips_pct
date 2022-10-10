@@ -1,4 +1,4 @@
-//Module name: Floating IPS, shared core for all frontends
+﻿//Module name: Floating IPS, shared core for all frontends
 //Author: Alcaro
 //Date: See Git history
 //Licence: GPL v3.0 or higher
@@ -272,26 +272,26 @@ public:
 
 const struct errorinfo ipserrors[]={
 		{ el_ok, NULL },//ips_ok
-		{ el_unlikelythis, "The patch was applied, but is most likely not intended for this ROM." },//ips_notthis
-		{ el_unlikelythis, "The patch was applied, but did nothing. You most likely already had the output file of this patch." },//ips_thisout
-		{ el_warning, "The patch was applied, but appears scrambled or malformed." },//ips_suspicious
-		{ el_broken, "The patch is broken and can't be used." },//ips_invalid
+		{ el_unlikelythis, "S'ha aplicat el peda\xE7, per\xF2 segurament no estava pensat per a aquesta ROM." },//ips_notthis
+		{ el_unlikelythis, "S'ha aplicat el peda\xE7, per\xF2 no ha fet res. Segurament heu seleccionat el fitxer resultant d'aplicar aquest peda\xE7" },//ips_thisout
+		{ el_warning, "S'ha aplicat el peda\xE7, per\xF2 sembla estar malm\xE8s." },//ips_suspicious
+		{ el_broken, "El peda\xE7 est\xE0 malm\xE8s i no s'ha pogut emprar." },//ips_invalid
 		
-		{ el_broken, "The IPS format does not support files larger than 16MB." },//ips_16MB
-		{ el_warning, "The files are identical! The patch will do nothing." },//ips_identical
+		{ el_broken, "El format IPS no permet fitxers de m\xE9s de de 16MB." },//ips_16MB
+		{ el_warning, "Els fitxers s\xF3n id\xE8ntics! Aplicar-hi el peda\xE7 no canviaria res." },//ips_identical
 	};
 
 const struct errorinfo bpserrors[]={
 		{ el_ok, NULL },//bps_ok,
-		{ el_notthis, "That's the output file already." },//bps_to_output
-		{ el_notthis, "This patch is not intended for this ROM." },//bps_not_this
-		{ el_broken, "This patch is broken and can't be used." },//bps_broken
-		{ el_broken, "Couldn't read input patch." },//bps_io
+		{ el_notthis, "Aquest ja \xE9s el fitxer de sortida." },//bps_to_output
+		{ el_notthis, "Aquest peda\xE7 no est\xE0 pensat per a aquesta ROM." },//bps_not_this
+		{ el_broken, "El peda\xE7 est\xE0 malm\xE8s i no s'ha pogut emprar." },//bps_broken
+		{ el_broken, "No s'ha pogut llegir el peda\xE7 d'entrada." },//bps_io
 		
-		{ el_warning, "The files are identical! The patch will do nothing." },//bps_identical
-		{ el_broken, "These files are too big for this program to handle." },//bps_too_big
-		{ el_broken, "These files are too big for this program to handle." },//bps_out_of_mem (same message as above, it's accurate for both.)
-		{ el_broken, "Patch creation was canceled." },//bps_canceled
+		{ el_warning, "Els fitxers s\xF3n id\xE8ntics! Aplicar-hi el peda\xE7 no canviaria res." },//bps_identical
+		{ el_broken, "Aquests fitxers s\xF3n m\xE9s grans del que aquest programa admet." },//bps_too_big
+		{ el_broken, "Aquests fitxers s\xF3n m\xE9s grans del que aquest programa admet." },//bps_out_of_mem (same message as above, it's accurate for both.)
+		{ el_broken, "La creaci\xF3 del peda\xE7 ha estat cancel\xB7lada." },//bps_canceled
 	};
 
 LPCWSTR GetManifestName(LPCWSTR romname)
@@ -467,7 +467,7 @@ LPCWSTR config::get(LPCWSTR name, LPCWSTR def)
 
 LPWSTR config::flatten()
 {
-	LPCWSTR header = TEXT("[Flips]\n#Changing this file may void your warranty. Do not report any bugs if you do.\n");
+	LPCWSTR header = TEXT("[Flips]\n#Canviar aquest fitxer pot anul\xB7lar la teva garantia. Si ho feu, no reporteu cap error.\n");
 	
 	size_t len = wcslen(header);
 	for (size_t i=0;i<this->numentries;i++)
@@ -792,12 +792,12 @@ struct errorinfo ApplyPatchMem2(file* patch, struct mem inrom, bool verifyinput,
 	struct mem outrom={NULL,0};
 	struct mem manifest={NULL,0};
 	
-	errinf=error(el_broken, "Unknown patch format.");
+	errinf=error(el_broken, "Format de peda\xE7 desconegut.");
 	if (patchtype==ty_bps)
 	{
 		errinf=bpserrors[bps_apply(patchmem, inrom, &outrom, &manifest, !verifyinput)];
 		if (errinf.level==el_notthis && !verifyinput && outrom.ptr)
-			errinf = error(el_warning, "This patch is not intended for this ROM (output created anyways)");
+			errinf = error(el_warning, "Aquest peda\xE7 no est\xE0 pensat per a aquesta ROM (s'ha creat de fitxer de sortida igualment)");
 		if (errinf.level==el_notthis)
 		{
 			bpsinfo inf = bps_get_info(patch, false);
@@ -824,7 +824,7 @@ struct errorinfo ApplyPatchMem2(file* patch, struct mem inrom, bool verifyinput,
 #else
 # define z "z"
 #endif
-				sprintf(errtext, "This patch is not intended for this ROM. Expected file size %" z "u, got %" z "u.", inf.size_in, inrom.len);
+				sprintf(errtext, "Aquest peda\xE7 no est\xE0 pensat per a aquesta ROM. S'esperava un fitxer de mida: %" z ", aquest \xE9s de: %" z "u.", inf.size_in, inrom.len);
 				errinf.description=errtext;
 			}
 			else
@@ -832,7 +832,7 @@ struct errorinfo ApplyPatchMem2(file* patch, struct mem inrom, bool verifyinput,
 				uint32_t crc = crc32(inrom.ptr, inrom.len);
 				if (inf.crc_in != crc)
 				{
-					sprintf(errtext, "This patch is not intended for this ROM. Expected checksum %.8X, got %.8X.", inf.crc_in, crc);
+					sprintf(errtext, "Aquest peda\xE7 no est\xE0 pensat per a aquesta ROM. EL valor de control esperat era: %.8X, el d'aquest \xE9s: %.8X.", inf.crc_in, crc);
 					errinf.description=errtext;
 				}
 			}
@@ -840,7 +840,7 @@ struct errorinfo ApplyPatchMem2(file* patch, struct mem inrom, bool verifyinput,
 	}
 	if (patchtype==ty_ips) errinf=ipserrors[ips_apply(patchmem, inrom, &outrom)];
 	if (patchtype==ty_ups) errinf=bpserrors[ups_apply(patchmem, inrom, &outrom)];
-	if (errinf.level==el_ok) errinf.description="The patch was applied successfully!";
+	if (errinf.level==el_ok) errinf.description="S'ha aplicat el peda\xE7 correctament!";
 	
 	struct manifestinfo defmanifestinfo={true,false,NULL};
 	if (!manifestinfo) manifestinfo=&defmanifestinfo;
@@ -853,12 +853,12 @@ struct errorinfo ApplyPatchMem2(file* patch, struct mem inrom, bool verifyinput,
 			else manifestname=GetManifestName(outromname);
 			if (!WriteWholeFile(manifestname, manifest) && manifestinfo->required)
 			{
-				if (errinf.level==el_ok) errinf=error(el_warning, "The patch was applied, but the manifest could not be created.");
+				if (errinf.level==el_ok) errinf=error(el_warning, "S'ha aplicat el peda\xE7, per\xF2 no s'ha pogut crear el manifest.");
 			}
 		}
 		else if (manifestinfo->required && errinf.level==el_ok)
 		{
-			errinf=error(el_warning, "The patch was applied, but there was no manifest present.");
+			errinf=error(el_warning, "S'ha aplicat el peda\xE7, per\xF2 no hi havia cap manifest present.");
 		}
 	}
 	
@@ -870,13 +870,13 @@ struct errorinfo ApplyPatchMem2(file* patch, struct mem inrom, bool verifyinput,
 		{
 			if (!WriteWholeFileWithHeader(outromname, inrom, outrom))
 			{
-				errinf=error(el_broken, "Couldn't write ROM");
+				errinf=error(el_broken, "No s'ha pogut escriure la ROM");
 			}
 		}
 	}
 	else if (errinf.level<el_notthis)
 	{
-		if (!WriteWholeFile(outromname, outrom)) errinf=error(el_broken, "Couldn't write ROM");
+		if (!WriteWholeFile(outromname, outrom)) errinf=error(el_broken, "No s'ha pogut escriure la ROM");
 	}
 	free(outrom.ptr);
 	free(patchmem.ptr);
@@ -888,7 +888,7 @@ struct errorinfo ApplyPatchMem2(file* patch, struct mem inrom, bool verifyinput,
 		{
 			if (errinf2.level==el_ok)
 			{
-				return error(el_warning, "The patch was applied, but it was created from a headered ROM, which may not work for everyone.");
+				return error(el_warning, "S'ha aplicat el peda\xE7, per\xF2 a partir d'una ROM sense «header», pel que pot no funcionar a tothom.");
 			}
 			else return errinf2;
 		}
@@ -911,7 +911,7 @@ struct errorinfo ApplyPatchMem(file* patch, LPCWSTR inromname, bool verifyinput,
 	if (!inrom)
 	{
 		if (update_rom_list) DeleteRomFromList(inromname);
-		return error(el_broken, "Couldn't read ROM");
+		return error(el_broken, "No s'ha pogut llegir la ROM");
 	}
 	struct errorinfo errinf = ApplyPatchMem2(patch, inrom->get(), verifyinput,
 	                                         shouldRemoveHeader(inromname, inrom->len()), outromname, manifestinfo);
@@ -926,7 +926,7 @@ struct errorinfo ApplyPatch(LPCWSTR patchname, LPCWSTR inromname, bool verifyinp
 	file* patch = file::create(patchname);
 	if (!patch)
 	{
-		return error(el_broken, "Couldn't read input patch");
+		return error(el_broken, "No s'ha pogut llegir el peda\xE7 d'entrada");
 	}
 	struct errorinfo errinf=ApplyPatchMem(patch, inromname, verifyinput, outromname, manifestinfo, update_rom_list);
 	delete patch;
@@ -934,7 +934,7 @@ struct errorinfo ApplyPatch(LPCWSTR patchname, LPCWSTR inromname, bool verifyinp
 }
 
 
-char bpsdProgStr[24];
+char bpsdProgStr[26];
 int bpsdLastPromille=-1;
 
 bool bpsdeltaGetProgress(size_t done, size_t total)
@@ -944,14 +944,15 @@ bool bpsdeltaGetProgress(size_t done, size_t total)
 	if (promille==bpsdLastPromille) return false;
 	bpsdLastPromille=promille;
 	if (promille>=1000) return false;
-	strcpy(bpsdProgStr, "Please wait... ");
-	bpsdProgStr[15]='0'+promille/100;
-	int digit1=((promille<100)?15:16);
+	strcpy(bpsdProgStr, "Espereu... ");
+	bpsdProgStr[20]='0'+promille/100;
+	int digit1=((promille<100)?20:21);
 	bpsdProgStr[digit1+0]='0'+promille/10%10;
-	bpsdProgStr[digit1+1]='.';
+	bpsdProgStr[digit1+1]=',';
 	bpsdProgStr[digit1+2]='0'+promille%10;
-	bpsdProgStr[digit1+3]='%';
-	bpsdProgStr[digit1+4]='\0';
+	bpsdProgStr[digit1+3]=' ';
+	bpsdProgStr[digit1+4]='%';
+	bpsdProgStr[digit1+5]='\0';
 	return true;
 }
 
@@ -985,7 +986,7 @@ struct errorinfo CreatePatchToMem(LPCWSTR inromname, LPCWSTR outromname, enum pa
 			if (!romsmap[i])
 			{
 				if (i==1) delete romsmap[0];
-				return error(el_broken, "Couldn't read this ROM.");
+				return error(el_broken, "No s'ha pogut llegir aquesta ROM.");
 			}
 			if (shouldRemoveHeader(romname, romsmap[i]->len()) && (patchtype==ty_bps || patchtype==ty_bps_linear || patchtype==ty_bps_moremem))
 			{
@@ -1001,7 +1002,7 @@ struct errorinfo CreatePatchToMem(LPCWSTR inromname, LPCWSTR outromname, enum pa
 			if (!roms[i])
 			{
 				if (i==1) delete roms[0];
-				return error(el_broken, "Couldn't read this ROM.");
+				return error(el_broken, "No s'ha pogut llegir aquesta ROM.");
 			}
 			lens[i] = roms[i]->len();
 			if (shouldRemoveHeader(romname, lens[i]) && (patchtype==ty_bps || patchtype==ty_bps_linear || patchtype==ty_bps_moremem))
@@ -1021,11 +1022,11 @@ struct errorinfo CreatePatchToMem(LPCWSTR inromname, LPCWSTR outromname, enum pa
 		if (manifestinfo->name) manifestname=manifestinfo->name;
 		else manifestname=GetManifestName(outromname);
 		manifest=ReadWholeFile(manifestname);
-		if (!manifest.ptr) manifesterr=error(el_warning, "The patch was created, but the manifest could not be read.");
+		if (!manifest.ptr) manifesterr=error(el_warning, "S'ha creat el peda\xE7, per\xF2 no s'ha pogut llegir el manifest.");
 	}
-	else manifesterr=error(el_warning, "The patch was created, but this patch format does not support manifests.");
+	else manifesterr=error(el_warning, "S'ha creat el peda\xE7, per\xF2 el format d'aquest no admet manifests.");
 	
-	struct errorinfo errinf={ el_broken, "Unknown patch format." };
+	struct errorinfo errinf={ el_broken, "Format de peda\xE7 desconegut." };
 	if (patchtype==ty_ips)
 	{
 		errinf=ipserrors[ips_create(romsmap[0]->get(), romsmap[1]->get(), patchmem)];
@@ -1050,14 +1051,14 @@ struct errorinfo CreatePatchToMem(LPCWSTR inromname, LPCWSTR outromname, enum pa
 		errinf=bpserrors[bps_create_linear(romsmap[0]->get(), romsmap[1]->get(), manifest, patchmem)];
 	}
 	FreeFileMemory(manifest);
-	if (errinf.level==el_ok) errinf.description="The patch was created successfully!";
+	if (errinf.level==el_ok) errinf.description="S'ha creat el peda\xE7 correctament!";
 	
 	if (manifestinfo->required && errinf.level==el_ok && manifesterr.level!=el_ok) errinf=manifesterr;
 	
 	if (errinf.level==el_ok && lens[0] > lens[1])
 	{
-		errinf=error(el_warning, "The patch was created, but the input ROM is larger than the "
-		                         "output ROM. Double check whether you've gotten them backwards.");
+		errinf=error(el_warning, "S'ha creat el peda\xE7, per\xF2 la ROM d'entrada \xE9s m\xE9s gran que la "
+		                         "ROM de sortida. Comproveu que no les hagueu intercanviat per error.");
 	}
 	
 	if (usemmap)
@@ -1133,11 +1134,11 @@ errorlevel patchinfo(LPCWSTR patchname, struct manifestinfo * manifestinfo)
 		
 		LPCWSTR inromname = FindRomForPatch(patch, NULL);
 		//'z' macro defined above
-		printf("Input ROM: %" z "u bytes, CRC32 %.8X", info.size_in, info.crc_in);
+		printf("ROM d'entrada: %" z "u bytes, CRC32 %.8X", info.size_in, info.crc_in);
 		if (inromname) wprintf(TEXT(", %s"), inromname);
 		puts("");
 		
-		printf("Output ROM: %" z "u bytes, CRC32 %.8X\n", info.size_out, info.crc_out);
+		printf("ROM de sortida: %" z "u bytes, CRC32 %.8X\n", info.size_out, info.crc_out);
 		//floating point may lose a little precision, but it's easier than dodging overflows, and this
 		//is the output of inaccurate heuristics anyways, losing a little more makes no difference.
 		//Windows MulDiv could also work, but it's kinda nonportable.
@@ -1145,7 +1146,7 @@ errorlevel patchinfo(LPCWSTR patchname, struct manifestinfo * manifestinfo)
 		
 		if (info.meta_size)
 		{
-			printf("Metadata: %" z "u bytes:\n", info.meta_size);
+			printf("Metadades: %" z "u bytes:\n", info.meta_size);
 			char* meta_iter = (char*)meta.ptr;
 			char* meta_end = meta_iter + meta.len;
 			for (int i=0;i<3;i++)
@@ -1164,7 +1165,7 @@ errorlevel patchinfo(LPCWSTR patchname, struct manifestinfo * manifestinfo)
 		free(meta.ptr);
 		return el_ok;
 	}
-	puts("No information available for this patch type");
+	puts("No hi ha informaci\xF3 disponible per a aquest tipus de peda\xE7.");
 	return el_broken;
 }
 
@@ -1176,43 +1177,43 @@ void usage()
 	fputs(
 	// 12345678901234567890123456789012345678901234567890123456789012345678901234567890
 	   flipsversion "\n"
-	  "usage:\n"
+	  "usage: \n"
 	  "   "
 #ifndef FLIPS_CLI
 	     "flips\n"
-	  "or flips patch.bps\n"
-	  "or "
+	  "o flips patch.bps\n"
+	  "o "
 #endif
 	     "flips [--apply] [--exact] patch.bps rom.smc [outrom.smc]\n"
-	  "or flips [--create] [--exact] [--bps | etc] clean.smc hack.smc [patch.bps]\n"
+	  "o flips [--create] [--exact] [--bps | etc] clean.smc hack.smc [patch.bps]\n"
 	  "\n"
 	// 12345678901234567890123456789012345678901234567890123456789012345678901234567890
 	  "options:\n"
-	  "-a --apply: apply IPS, BPS or UPS patch (default if given two arguments)\n"
-	  "  if output filename is not given, Flips defaults to patch.smc beside the patch\n"
-	  "-c --create: create IPS or BPS patch (default if given three arguments)\n"
-	  "-I --info: BPS files contain information about input and output roms, print it\n"
+	  "-a --apply: aplica peda\xE7os de tipus IPS, BPS o UP (per defecte si es donen dos arguments)\n"
+	  "  si no es d\xF3na un nom pel fitxer de sortida, FLIPeda\xE7 empra patch.smc per defecte a part del peda\xE7\n"
+	  "-c --create: crea un peda\xE7 de tipus IPS or BPS (per defecte si es donen tres arguments)\n"
+	  "-I --info: els fitxers BPS contenen informaci\xF3 sobre les ROM d'entrada i sortida, mostra-ho\n"
 	  //"  also estimates how much of the source file is retained\n"
 	  //"  anything under 400 is fine, anything over 600 should be treated with suspicion\n"
 	  //(TODO: --info --verbose)
 	  "-i --ips, -b -B --bps --bps-delta, --bps-delta-moremem, --bps-linear:\n"
-	  "  create this patch format instead of guessing based on file extension\n"
-	  "  ignored when applying\n"
-	  " bps creation styles:\n"
-	  "  delta is the recommended and default one; it's a good balance between creation\n"
-	  "    performance and patch size\n"
-	  "  delta-moremem is usually slightly (~3%) faster than delta, but uses about\n"
-	  "    twice as much memory; it gives identical patches to delta\n"
-	  "  linear is the fastest, but tends to give pretty big patches\n"
-	  "  all BPS patchers can apply all patch styles, the only difference is file size\n"
-	  "    and creation performance\n"
-	  "--exact: do not remove SMC headers when applying or creating a BPS patch\n"
-	  "    not recommended, may affect patcher compatibility\n"
-	  "--ignore-checksum: accept checksum mismatches (BPS only)\n"
-	  "-m or --manifest: emit or insert a manifest file as romname.xml (BPS only)\n"
-	  "-mfilename or --manifest=filename: emit or insert a manifest file exactly here\n"
-	  "-h -? --help: show this information\n"
-	  "-v --version: show application version\n"
+	  "  crea aquest format de peda\xE7 enlloc d'assumir-ho a partir de l'extensi\xF3 del fitxer\n"
+	  "  ignorat en aplicar-se\n"
+	  " estils de creaci\xF3 de BPS:\n"
+	  "  delta \xE9s l'opci\xF3 per defecte i la recomanada; ofereix u bon equilibri entre rendiment\n"
+	  "    de creaci\xF3 i mida del peda\xE7\n"
+	  "  delta-moremem \xE9s usualment lleugerament (~3%) m\xE9s r\xE0pida que la delta, per\xF2 empra ben\n"
+	  "    b\xE9 el doble de mem\xF2ria; d\xF3na peda\xE7os id\xE8ntics als de delta\n"
+	  "  linear \xE9s el m\xE9s r\xE0pid, per\xF2 tendeix a crear peda\xE7os for\xE7a grans\n"
+	  "  tots els aplicador de peda\xE7os de BPS poden aplicar tots els estils, essent les \xFAniques difer\xE8ncies\n"
+	  "    la mida del fitxer resultant i el rendiment de creaci\xF3\n"
+	  "--exact: no elimina els «SMC header» quan s'apliqui o es cre\xEF un peda\xE7 BPS\n"
+	  "    no es recomana, pot afectar la compatibilitat amb aplicadors de peda\xE7os\n"
+	  "--ignore-checksum: accepta difer\xE8ncies en el checksum (nom\xE9s BPS)\n"
+	  "-m o --manifest: crea o inserta un fitxer de manifest anomenat romname.xml (nom\xE9s BPS)\n"
+	  "-mfilename o --manifest=filename: crea o inserta un fitxer de manifest aqu\xED\n"
+	  "-h -? --help: mostra aquesta informaci\xF3\n"
+	  "-v --version: mostra la versi\xF3 de l'aplicaci\xF3\n"
 	  "\n"
 	// 12345678901234567890123456789012345678901234567890123456789012345678901234567890
 	, stdout);
@@ -1373,8 +1374,8 @@ int flipsmain(int argc, WCHAR * argv[])
 				outname = outname_buf;
 				if (wcscmp(arg[1], outname) != 0 && file::exists(outname))
 				{
-					wprintf(TEXT("You have requested creation of file %s, but that file already exists.\n"
-					             "If you want to overwrite it, supply that filename explicitly; if not, provide another filename.\n"),
+					wprintf(TEXT("Heu demanat la creaci\xF3 del fitxer %s, per\xF2 aquest ja existeix.\n"
+					             "Si el voleu sobreescriure, doneu el nom del fitxer de forma expl\xED\cita; sin\xF3, doneu un altre nom de fitxer.\n"),
 					             outname);
 					return 1;
 				}
@@ -1392,7 +1393,7 @@ int flipsmain(int argc, WCHAR * argv[])
 			{
 				if (patchtype==ty_null)
 				{
-					puts("Error: Unknown patch type.");
+					puts("Error: Tipus de peda\xE7 desconegut.");
 					return error_to_exit(el_broken);
 				}
 				LPWSTR arg2=(WCHAR*)malloc(sizeof(WCHAR)*(wcslen(arg[1])+4+1));
@@ -1408,14 +1409,14 @@ int flipsmain(int argc, WCHAR * argv[])
 				LPCWSTR patchext=GetExtension(arg[2]);
 				if (!*patchext)
 				{
-					puts("Error: Unknown patch type.");
+					puts("Error: Tipus de peda\xE7 desconegut.");
 					return el_broken;
 				}
 				else if (!wcsicmp(patchext, TEXT(".ips"))) patchtype=ty_ips;
 				else if (!wcsicmp(patchext, TEXT(".bps"))) patchtype=ty_bps;
 				else
 				{
-					wprintf(TEXT("Error: Unknown patch type (%s)\n"), patchext);
+					wprintf(TEXT("Error: Tipus de peda\xE7 desconegut (%s)\n"), patchext);
 					return error_to_exit(el_broken);
 				}
 			}
