@@ -1,42 +1,50 @@
-Floating IPS (or Flips) is a patcher for IPS and BPS files, aiming for a simple interface yet plenty of power under the hood.
+FLIPedaç és la traducció al català de [Floating IPS (or Flips)](https://github.com/Alcaro/Flips), un aplicador de pedaços (patch) de tipus IPS i BPS amb una interfície simple, però molt capaç.
 
-Features:
-- Creates the smallest BPS patches of any known tool in existence, and is faster than any other comparable creator
-- Creates the smallest IPS patches of any known tool in existence, too (but only a little smaller, Lunar IPS is quite good)
-- Fully-featured GUIs under Windows and GTK+, including command line support; can also be a pure command line program
-- Can apply multiple patches to the same ROM, creating a huge pile of ROMs (GUI only)
-- Can remembers which ROMs you've used, and use them again if it thinks it's correct (BPS only, GUI only)
-- Can launch other programs after patching the ROMs; together with the above, this allows you to double click a BPS to launch an emulator (GUI only)
+La traducció ha estat feta per Nil CM (TW: @PelochoRockea) per a ['Ce Trencada'](https://cetrencada.cat/).
+Trobeu-hi més informació al següent [enllaç](https://cetrencada.cat/comunitat/eines/flipedaç).
 
-Floating IPS is in maintenance mode. Bug reports and pull requests will be processed, but feature requests are unlikely to be implemented. There will be no formal releases within any forseeable future; users should consider every commit a release.
+Característiques:
+- Crea els pedaços BPS més petits que cap altra eina, i més ràpidament que d'altres comparables.
+- Crea els pedaços IPS més petits que cap altra eina, també (però només una mica més menuts, Lunar IPS és molt bo).
+- Interfície completa per a Windows amb GTK+, incloent-hi suport per a la consola de comandes: pot ser emprat únicament des de la consola de forma completa (*nota: és possible que alguns caràcters no es visualitzin de forma correcta per motius de compatibilitat*).
+- Pot aplicar múltiples pedaços a la mateixa ROM, creant una bona pila de ROMs (no disponible en consola de comandes).
+- Recorda quines ROMs heu fet servir, i l'empra de nou si creu que és correcte (no disponible en consola de comandes, només per a BPS).
+- Pot obrir altres programes després d'aplicar el pedaç a la ROM; i juntament amb l'anterior, permet obrir un emulador fent doble clic a un fitxer BPS (no disponible en consola de comandes).
 
-Third-party forks, or separate tools, covering usecases this version doesn't (this only acknowledges their existence, and is not an endorsement; I haven't used most of them):
-- [Floating IPS](https://github.com/Alcaro/Flips); the original Floating IPS, in case you're currently looking at a fork
-- [MultiPatch](https://projects.sappharad.com/tools/multipatch.html), OSX, applies BPS/IPS/UPS/PPF/Xdelta/bsdiff/Ninja2, creates BPS/IPS/XDelta/bsdiff
-- [QtFloatingIPS](https://github.com/covarianttensor/QtFloatingIPS), Flips port to OSX (may work on others too)
-- [Wh0ba Floating IPS](https://wh0ba.github.io/repo/), Flips port to iOS/Cydia
-- [RomPatcher.js](https://www.marcrobledo.com/RomPatcher.js/), JavaScript, applies APS/BPS/IPS/PPF/RUP/UPS/Xdelta, creates APS/BPS/IPS/RUP/UPS
-- There are many tools that offer a strict subset of Flips functionality (Lunar IPS, beat, etc). I'm not listing them here.
+Aquó sota es llisten altres eines d'aplicació de pedaços basats en FLIPS (algunes per a altres plataformes):
+- [Floating IPS](https://github.com/Alcaro/Flips): el Floating IPS original.
+- [MultiPatch](https://projects.sappharad.com/tools/multipatch.html): per a MacOS, aplica BPS/IPS/UPS/PPF/Xdelta/bsdiff/Ninja2 i crea BPS/IPS/XDelta/bsdiff.
+- [QtFloatingIPS](https://github.com/covarianttensor/QtFloatingIPS): Port de FLIPS a MacOS.
+- [Wh0ba Floating IPS](https://wh0ba.github.io/repo/): Port de FLIPS a iOS/Cydia.
+- [RomPatcher.js](https://www.marcrobledo.com/RomPatcher.js/): JavaScript, aplica APS/BPS/IPS/PPF/RUP/UPS/Xdelta i crea APS/BPS/IPS/RUP/UPS.
 
-Compilation - Linux (Debian/Ubuntu):
-- `sudo apt-get install g++ build-essential`; for GUI support, also `sudo apt-get install libgtk-3-dev pkg-config`
-- `./make.sh` to build an optimized binary; for development, use `make CFLAGS=-g` (ignore make-maintainer.sh)
+## Compilació
 
-Compilation - other Linux:
-- Install make and g++; for GUI support, also install pkg-config and GTK+ 3 headers; for profiling support, also install curl or wget
-- `./make.sh` to build an optimized binary; for development, use `make CFLAGS=-g` (ignore make-maintainer.sh)
+### Linux (Debian/Ubuntu):
+- `sudo apt-get install g++ build-essential` per instal·lar el compilador.
+- `sudo apt-get install libgtk-3-dev pkg-config` per instal·lar la llibreria gràfica de l'aplicació.
+- `./make.sh` per a fer una versió només consola, per a la versió completa empreu `make CFLAGS=-g`.
 
-Compilation - OSX, other Unix, or anything else with a C++ compiler:
-- Install a C++ compiler
-- `clang++ *.c *.cpp -O3 -o flips` (with changes as appropriate)
-- For GTK GUI support, use some suitable variant of `clang++ *.c *.cpp -O3 -o flips -DFLIPS_GTK -lgtk3`
-- For better optimizations (profiling/etc), extract the appropriate commands from Makefile and make.sh
+### Altres Linux:
+- Instal·leu `make` i `g++`.
+- Per a la llibreria gràfica instal·leu `pkg-config` i `GTK+ 3 headers`.
+- Per a suport de perfilació, instal·leu també `curl` o `wget`.
+- `./make.sh` per a fer una versió només consola, per a la versió completa empreu `make CFLAGS=-g`.
 
-Compilation - Windows:
-- Install [mingw-w64](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-win32/seh/), or similar
-- `mingw32-make CFLAGS=-O3` (GUI is automatically enabled), or extract the appropriate optimization commands from make.sh
-- Alternatively, [here's a binary](https://www.smwcentral.net/?p=section&a=details&id=11474) (though it's quite outdated).
+### MacOS, altres Unix o qualsevol màquina amb un compilador de C++:
+- Instal·leu un compilador de C++ compatible amb el vostre dispositiu.
+- Empreu `clang++ *.c *.cpp -O3 -o flips`.
+- Per a la llibreria gràfica GTK, empreu alguna variant apropiada de `clang++ *.c *.cpp -O3 -o flips -DFLIPS_GTK -lgtk3`.
+- Per a una millor optimització (perfilació/etc), extraieu les comandes apropiades dels fitxers `Makefile` i `make.sh`.
 
-Usage:
-- If GUI is enabled, just run the program. File pickers' window titles tell what they want; Enable automatic ROM picker and Run in Emulator can cause file pickers to appear and disappear depending on the chosen patch, making usage less predictable, so it's disabled by default.
-- For CLI use, see `./flips --help`. Available both with or without GUI support (though Windows CLI use from interactive prompts is slightly screwy, due to OS limitations).
+### Windows:
+- Instal·leu [mingw-w64](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-win32/seh/), o similar.
+- Empreu `make CFLAGS=-O3` (interfície gràfica habilitada per defecte), o extraieu les comandes d'optimització apropiades del fitxer `make.sh`.
+
+## Instruccions d'ús:
+- Per a ús amb interfície gràfica executeu el programa. El títol de les finestres de selecció de fitxers estipulen què necessiten en aquell moment.
+- Per a ús amb consola de comandes, empreu `./flips --help` (*nota: és possible que alguns caràcters no es visualitzin de forma correcta per motius de compatibilitat*).
+
+## Crèdits
+Floating IPS (FLIPS) i codi original: [Alcaro](https://github.com/alcaro/).
+FLIPedaç, traducció i localització: [NilCM](https://github.com/Nilcm01/).

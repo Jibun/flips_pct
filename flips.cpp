@@ -1188,7 +1188,7 @@ void usage()
 	  "o flips [--create] [--exact] [--bps | etc] clean.smc hack.smc [patch.bps]\n"
 	  "\n"
 	// 12345678901234567890123456789012345678901234567890123456789012345678901234567890
-	  "options:\n"
+	  "opcions:\n"
 	  "-a --apply: aplica peda\xE7os de tipus IPS, BPS o UP (per defecte si es donen dos arguments)\n"
 	  "  si no es d\xF3na un nom pel fitxer de sortida, FLIPeda\xE7 empra patch.smc per defecte a part del peda\xE7\n"
 	  "-c --create: crea un peda\xE7 de tipus IPS or BPS (per defecte si es donen tres arguments)\n"
