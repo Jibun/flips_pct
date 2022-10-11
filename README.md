@@ -1,17 +1,22 @@
+# FLIPedaç - L'aplicador de pedaços de 'Ce Trencada' ![Logotip de FLIPedaç](./flips.ico)
+
 FLIPedaç és la traducció al català de [Floating IPS (or Flips)](https://github.com/Alcaro/Flips), un aplicador de pedaços (patch) de tipus IPS i BPS amb una interfície simple, però molt capaç.
 
-La traducció ha estat feta per Nil CM (TW: @PelochoRockea) per a ['Ce Trencada'](https://cetrencada.cat/).
+![IPS](./ips.ico) ![BPS](./bps.ico)
+
+La traducció ha estat feta per Nil CM (TW: [@PelochoRockea](https://twitter.com/PelochoRockea)) per a ['Ce Trencada'](https://cetrencada.cat/).
 Trobeu-hi més informació al següent [enllaç](https://cetrencada.cat/comunitat/eines/flipedaç).
 
-Característiques:
+### Característiques
 - Crea els pedaços BPS més petits que cap altra eina, i més ràpidament que d'altres comparables.
-- Crea els pedaços IPS més petits que cap altra eina, també (però només una mica més menuts, Lunar IPS és molt bo).
+- Crea els pedaços IPS més petits que cap altra eina, també (però només una mica més menuts, ja que Lunar IPS és molt bo).
 - Interfície completa per a Windows amb GTK+, incloent-hi suport per a la consola de comandes: pot ser emprat únicament des de la consola de forma completa (*nota: és possible que alguns caràcters no es visualitzin de forma correcta per motius de compatibilitat*).
 - Pot aplicar múltiples pedaços a la mateixa ROM, creant una bona pila de ROMs (no disponible en consola de comandes).
 - Recorda quines ROMs heu fet servir, i l'empra de nou si creu que és correcte (no disponible en consola de comandes, només per a BPS).
 - Pot obrir altres programes després d'aplicar el pedaç a la ROM; i juntament amb l'anterior, permet obrir un emulador fent doble clic a un fitxer BPS (no disponible en consola de comandes).
 
-Aquó sota es llisten altres eines d'aplicació de pedaços basats en FLIPS (algunes per a altres plataformes):
+### Altres eines basades en FLIPS
+Aquí sota es llisten altres eines d'aplicació de pedaços basats en FLIPS (algunes per a altres plataformes):
 - [Floating IPS](https://github.com/Alcaro/Flips): el Floating IPS original.
 - [MultiPatch](https://projects.sappharad.com/tools/multipatch.html): per a MacOS, aplica BPS/IPS/UPS/PPF/Xdelta/bsdiff/Ninja2 i crea BPS/IPS/XDelta/bsdiff.
 - [QtFloatingIPS](https://github.com/covarianttensor/QtFloatingIPS): Port de FLIPS a MacOS.
@@ -41,10 +46,11 @@ Aquó sota es llisten altres eines d'aplicació de pedaços basats en FLIPS (alg
 - Instal·leu [mingw-w64](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-win32/seh/), o similar.
 - Empreu `make CFLAGS=-O3` (interfície gràfica habilitada per defecte), o extraieu les comandes d'optimització apropiades del fitxer `make.sh`.
 
-## Instruccions d'ús:
+## Instruccions d'ús
 - Per a ús amb interfície gràfica executeu el programa. El títol de les finestres de selecció de fitxers estipulen què necessiten en aquell moment.
 - Per a ús amb consola de comandes, empreu `./flips --help` (*nota: és possible que alguns caràcters no es visualitzin de forma correcta per motius de compatibilitat*).
 
 ## Crèdits
 Floating IPS (FLIPS) i codi original: [Alcaro](https://github.com/alcaro/).
+
 FLIPedaç, traducció i localització: [NilCM](https://github.com/Nilcm01/).
