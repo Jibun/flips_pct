@@ -5,7 +5,7 @@ FLIPedaç és la traducció al català de [Floating IPS (or Flips)](https://gith
 ![IPS](./ips.ico) ![BPS](./bps.ico)
 
 La traducció ha estat feta per Nil CM (TW: [@PelochoRockea](https://twitter.com/PelochoRockea)) per a ['Ce Trencada'](https://cetrencada.cat/).
-Trobeu-hi més informació al següent [enllaç](https://cetrencada.cat/comunitat/eines/flipedaç).
+Trobeu-hi més informació al següent [enllaç](https://www.cetrencada.cat/comunitat/?eina=flipedaç).
 
 ### Característiques
 - Crea els pedaços BPS més petits que cap altra eina, i més ràpidament que d'altres comparables.
