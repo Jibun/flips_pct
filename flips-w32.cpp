@@ -434,6 +434,62 @@ int a_ApplyPatch(LPCWSTR clipatchname)
 	}
 }
 
+
+using namespace std; 
+int a_ApplyMultiPatch()
+{
+	//get patch names
+	WCHAR patchesPath[MAX_PATH];
+	if (BrowseFolder(patchesPath, TEXT("Escolliu la carpeta que cont\xE9 els peda\xE7os"))) {
+		vector<wstring> patchnames = FindPatchFiles(patchesPath);
+
+		WCHAR destinationPath[MAX_PATH];
+		if (patchnames.size() > 0 && BrowseFolder(destinationPath, TEXT("Escolliu la carpeta que cont\xE9 els fitxers sobre els que aplicar els peda\xE7os"))){
+
+			string errors = "";
+
+			for (int i = 0; i < patchnames.size(); i++) 
+			{
+				wstring patchname = patchnames[i];
+				wstring widestr = wstring(patchname.begin(), patchname.end());
+				const wchar_t* widecstr = widestr.c_str();
+
+				WCHAR matchingFile[MAX_PATH];
+				if(!FindMatchingFile(widecstr, destinationPath, matchingFile))
+				{
+					continue;
+				}
+
+				file* patch = file::create(widecstr);
+				if (patch)
+				{
+					struct errorinfo errinf = ApplyPatchMem(patch, matchingFile, true, matchingFile, NULL, state.enableAutoRomSelector);
+					//MessageBoxA(hwndMain, errinf.description, flipsversion, mboxtype[errinf.level]);
+					//return errinf.level;
+					if (errinf.level != el_ok) {
+						string errorStr = errinf.description;
+						errors += "Peda\xE7 ";
+						errors += WStringToString(patchname);
+						errors += ": ";
+						errors += errorStr;
+						errors += "\n";
+					}
+				}
+				delete patch;
+			}
+
+			errorlevel errLvl = el_broken;
+			if (errors.length() == 0) {
+				errors += "Tots els peda\xE7os aplicats correctament.";
+				errLvl = el_ok;
+			} 
+
+			MessageBoxA(hwndMain, errors.c_str(), flipsversion, mboxtype[errLvl]);
+		}
+	}
+	return 0;
+}
+
 void a_CreatePatch()
 {
 	//pick roms
@@ -442,8 +498,8 @@ void a_CreatePatch()
 	
 	romnames[0][0]='\0';
 	romnames[1][0]='\0';
-	if (!SelectRom(romnames[0], TEXT("Seleccioneu el fitxer ORIGINAL, NO MODIFICAT a emprar"), false)) return;
-	if (!SelectRom(romnames[1], TEXT("Seleccioneu el fitxer NOU A MODIFICAR"), false)) return;
+	if (!SelectRom(romnames[0], TEXT("Seleccioneu el fitxer ORIGINAL SENSE MODIFICAR a emprar"), false)) return;
+	if (!SelectRom(romnames[1], TEXT("Seleccioneu el fitxer NOU MODIFICAT a emprar"), false)) return;
 	
 	if (!wcsicmp(romnames[0], romnames[1]))
 	{
@@ -479,6 +535,134 @@ void a_CreatePatch()
 	bpsdCancel=false;
 	struct errorinfo errinf=CreatePatch(romnames[0], romnames[1], (enum patchtype)ofn.nFilterIndex, NULL, patchname);
 	if (!bpsdCancel) MessageBoxA(hwndMain, errinf.description, flipsversion, mboxtype[errinf.level]);
+}
+
+void a_CreateMultiPatch()
+{
+	//Escull arxius que apedaçar
+	WCHAR patchnames[65536];
+	patchnames[0]='\0';
+	bool multiplePatches;
+	//get patch names
+	OPENFILENAME ofn;
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize=sizeof(ofn);
+	ofn.hwndOwner=hwndMain;
+	//ofn.lpstrFilter=TEXT("Tots els peda\xE7os suportats (*.ips, *.bps)\0*.ips;*.bps;*.ups\0Tots els fitxers (*.*)\0*.*\0");
+	ofn.lpstrFile=patchnames;
+	ofn.nMaxFile=65535;
+	ofn.lpstrTitle=TEXT("Seleccioneu els fitxers ORIGINALS SENSE MODIFICAR a emprar");
+	ofn.Flags=OFN_HIDEREADONLY|OFN_FILEMUSTEXIST|OFN_PATHMUSTEXIST|OFN_ALLOWMULTISELECT|OFN_EXPLORER;
+	ofn.lpstrDefExt=patchextensions[state.lastPatchType];
+	if (!GetOpenFileName(&ofn)) return;
+	multiplePatches=(ofn.nFileOffset && patchnames[ofn.nFileOffset-1]=='\0');
+
+	if (!multiplePatches) {
+		MessageBoxA(hwndMain, "Per generar el peda\xE7 d'un \xFAnic fitxer feu servir l'opci\xF3 'Crea peda\xE7'", flipsversion, mboxtype[el_notice]);
+		return;
+	}
+
+	WCHAR originalFolderPath[MAX_PATH];
+	wcscpy(originalFolderPath, patchnames);
+	wcschr(originalFolderPath, '\0');
+
+	//Escull carpeta 2 amb els arxius alternatius (mateix nom)
+	WCHAR altVersionPath[MAX_PATH];
+	if (BrowseFolder(altVersionPath, TEXT("Escolliu la carpeta que cont\xE9 els fitxers NOUS MODIFICATS a emprar (els noms han de coincidir amb els dels ORIGINALS)"))){
+
+		if (lstrcmpiW(originalFolderPath, altVersionPath) == 0) {
+			MessageBoxA(hwndMain, "S\xF3n la mateixa carpeta! Heu de seleccionar una carpeta diferent a la que cont\xE9 els arxius originals.", flipsversion, mboxtype[el_broken]);
+			return;
+		}
+
+		vector<wstring> originalMatchingFiles;
+		vector<wstring> altMatchingFiles;
+		vector<wstring> destinationNames;
+
+		WCHAR thisFileNameWithPath[MAX_PATH];
+		wcscpy(thisFileNameWithPath, patchnames);
+		LPWSTR thisFileName = wcschr(thisFileNameWithPath, '\0');
+		*thisFileName='\\';
+		thisFileName++;
+
+		LPWSTR thisPatchName = wcschr(patchnames, '\0')+1;
+		while (*thisPatchName)
+		{
+			wcscpy(thisFileName, thisPatchName);
+
+			//Fes match dels arxius, si no se'n troba?
+			WCHAR matchingFile[MAX_PATH];
+			if(FindMatchingFile(thisFileName, altVersionPath, matchingFile, false))
+			{
+				wstring originalFileFullPath(originalFolderPath);
+				originalFileFullPath += wstring(TEXT("\\"));
+				originalFileFullPath += wstring(thisFileName);
+
+				originalMatchingFiles.push_back(originalFileFullPath);
+				altMatchingFiles.push_back(matchingFile);
+				destinationNames.push_back(thisFileName);
+			}
+
+			thisPatchName = wcschr(thisPatchName, '\0')+1;
+		}
+		
+		//Escull carpeta de sortida
+		WCHAR destinationPath[MAX_PATH];
+		if (originalMatchingFiles.size() > 0 && BrowseFolder(destinationPath, TEXT("Escolliu la carpeta on voleu que es generin els peda\xE7os"))){
+
+			/*if (lstrcmpiW(originalFolderPath, destinationPath) == 0 || lstrcmpiW(altVersionPath, destinationPath) == 0) {
+				MessageBoxA(hwndMain, "Heu de seleccionar una carpeta diferent a les que contenen els arxius originals i els arxius finals.", flipsversion, mboxtype[el_broken]);
+				return;
+			}*/
+
+			string errors = "";
+
+			/*typedef std::codecvt_utf8<wchar_t> contype;
+  			std::wstring_convert<contype, wchar_t> conver;*/
+
+			for (int i = 0; i < originalMatchingFiles.size(); i++) 
+			{
+				wstring originalMatchingFile = originalMatchingFiles[i];
+				wstring altMatchingFile = altMatchingFiles[i];
+				wstring destinationName = destinationNames[i];
+
+				wstring widestr1 = wstring(originalMatchingFile.begin(), originalMatchingFile.end());
+				const wchar_t* widecstr1 = widestr1.c_str();
+				wstring widestr2 = wstring(altMatchingFile.begin(), altMatchingFile.end());
+				const wchar_t* widecstr2 = widestr2.c_str();
+
+				//Per cada parell, fes pedaç
+				//set patch name and type
+				wstring patchFileFullPath(destinationPath);
+				patchFileFullPath += wstring(TEXT("\\"));
+				patchFileFullPath += wstring(destinationName);
+				patchFileFullPath += wstring(TEXT(".bps"));
+				wstring finalwidestr = wstring(patchFileFullPath.begin(), patchFileFullPath.end());
+				const wchar_t* finalwidecstr = finalwidestr.c_str();
+
+				//LPWSTR extension=GetExtension(patchname);
+				//if (extension) *extension='\0';
+				struct errorinfo errinf = CreatePatch(widecstr1, widecstr2, ty_bps, NULL, finalwidecstr);
+				if (errinf.level != el_ok) {
+					string errorStr = errinf.description;
+					errors += "Peda\xE7 "; 
+					errors += WStringToString(destinationName);
+					errors += ": ";
+					errors += errorStr;
+					errors += "\n";
+				}
+			}
+
+			errorlevel errLvl = el_broken;
+			if (errors.length() == 0) {
+				errors += "Tots els peda\xE7os creats correctament.";
+				errLvl = el_ok;
+			} 
+
+			MessageBoxA(hwndMain, errors.c_str(), flipsversion, mboxtype[errLvl]);
+			
+		}
+	}
 }
 
 bool a_SetEmulator()
@@ -774,8 +958,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			if (wParam==1) a_ApplyPatch(NULL);
 			if (wParam==2) a_CreatePatch();
-			if (wParam==3) a_ApplyRun(NULL);
-			if (wParam==4) a_ShowSettings();
+			if (wParam==3) a_ApplyMultiPatch();
+			if (wParam==4) a_CreateMultiPatch();
+			if (wParam==5) a_ApplyRun(NULL);
+			if (wParam==6) a_ShowSettings();
+			
+			
 			
 			if (wParam==101) a_SetEmulator();
 			if (wParam==102) a_AssignFileTypes(false);
@@ -835,7 +1023,7 @@ int ShowMainWindow(HINSTANCE hInstance, int nCmdShow)
 	hwndMain=CreateWindowA(
 				"floatingmunchers", flipsversion,
 				WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU|WS_BORDER|WS_MINIMIZEBOX,
-				state.windowleft, state.windowtop, 244, 93, NULL, NULL, GetModuleHandle(NULL), NULL);
+				state.windowleft, state.windowtop, 244, 147, NULL, NULL, GetModuleHandle(NULL), NULL);
 	
 	HFONT hfont=try_create_font("Segoe UI", 9);
 	if (!hfont) hfont=try_create_font("MS Shell Dlg 2", 8);
@@ -845,15 +1033,17 @@ int ShowMainWindow(HINSTANCE hInstance, int nCmdShow)
 	HWND lastbutton;
 #define button(x,y,w,h, text) \
 		do { \
-			lastbutton=CreateWindowA("BUTTON", text, WS_CHILD|WS_TABSTOP|WS_VISIBLE|(buttonid==0?(BS_DEFPUSHBUTTON|WS_GROUP):(BS_PUSHBUTTON)), \
+			lastbutton=CreateWindowA("BUTTON", text, WS_CHILD|WS_TABSTOP|WS_VISIBLE|BS_MULTILINE|(buttonid==0?(BS_DEFPUSHBUTTON|WS_GROUP):(BS_PUSHBUTTON)), \
 											x, y, w, h, hwndMain, (HMENU)(uintptr_t)(buttonid+1), GetModuleHandle(NULL), NULL); \
 			SendMessage(lastbutton, WM_SETFONT, (WPARAM)hfont, 0); \
 			buttonid++; \
 		} while(0)
 	button(6,  6,  100/*77*/,23, "Aplica peda\xE7"); SetActiveWindow(lastbutton);
 	button(124,6,  100/*83*/,23, "Crea peda\xE7");
-	button(6,  37, 100/*90*/,23, "Aplica i c\xF3rrer");
-	button(124,37, 100/*59*/,23, "Par\xE0metres");
+	button(6,  37, 100,		46, "Aplica m\xFAltiples peda\xE7os");
+	button(124,37, 100,		46, "Crea m\xFAltiples peda\xE7os");
+	button(6,  91, 100/*90*/,23, "Aplica i c\xF3rrer");
+	button(124,91, 100/*59*/,23, "Par\xE0metres");
 	
 	ShowWindow(hwndMain, nCmdShow);
 	

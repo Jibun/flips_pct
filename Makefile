@@ -73,7 +73,7 @@ all: $(FNAME_$(TARGET))
 obj:
 	mkdir obj
 clean: | obj
-	rm obj/* || true
+	del /Q obj\*
 
 ifeq ($(TARGET),windows)
   XFILES += obj/rc.o

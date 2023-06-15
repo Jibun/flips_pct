@@ -134,6 +134,7 @@ static inline char* strdup(const char * in)
 
 //provided by Flips core
 #include "global.h"
+#include "tools.h"
 
 enum patchtype {
 	ty_null,

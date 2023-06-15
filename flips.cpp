@@ -11,7 +11,7 @@
 void* operator new(size_t n) { return malloc(n); } // forget allocation failures, let them segfault.
 void operator delete(void * p) { free(p); }
 void operator delete(void * p, size_t n) { free(p); }
-extern "C" void __cxa_pure_virtual() { abort(); }
+//extern "C" void __cxa_pure_virtual() { abort(); }
 
 #if __GNUC__ && (__cpp_rtti || __cpp_exceptions)
 #warning "Consider building with -fno-exceptions -fno-rtti, to avoid dependencies on libgcc_s_sjlj-1.dll and libstdc++-6.dll."
@@ -1375,7 +1375,7 @@ int flipsmain(int argc, WCHAR * argv[])
 				if (wcscmp(arg[1], outname) != 0 && file::exists(outname))
 				{
 					wprintf(TEXT("Heu demanat la creaci\xF3 del fitxer %s, per\xF2 aquest ja existeix.\n"
-					             "Si el voleu sobreescriure, doneu el nom del fitxer de forma expl\xED\cita; sin\xF3, doneu un altre nom de fitxer.\n"),
+					             "Si el voleu sobreescriure, doneu el nom del fitxer de forma expl\xEDcita; sin\xF3, doneu un altre nom de fitxer.\n"),
 					             outname);
 					return 1;
 				}
