@@ -1007,7 +1007,7 @@ static HFONT try_create_font(const char * name, int size)
 int ShowMainWindow(HINSTANCE hInstance, int nCmdShow)
 {
 	WNDCLASSA wc;
-	wc.style=0;
+	wc.style=CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc=WindowProc;
 	wc.cbClsExtra=0;
 	wc.cbWndExtra=0;
@@ -1046,6 +1046,7 @@ int ShowMainWindow(HINSTANCE hInstance, int nCmdShow)
 	button(124,91, 100/*59*/,23, "Par\xE0metres");
 	
 	ShowWindow(hwndMain, nCmdShow);
+	UpdateWindow(hwndMain);
 	
 	a_AssignFileTypes(true);
 	

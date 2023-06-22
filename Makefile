@@ -3,7 +3,7 @@
 SRCDIR := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))))))
 
 CFLAGS_gtk = -DFLIPS_GTK $(GTKFLAGS) $(GTKLIBS)
-CFLAGS_windows := -DFLIPS_WINDOWS -mwindows -lgdi32 -lcomdlg32 -lcomctl32 -luser32 -lkernel32 -lshell32 -ladvapi32
+CFLAGS_windows := -DFLIPS_WINDOWS -mwindows -lgdi32 -lcomdlg32 -lcomctl32 -luser32 -lkernel32 -lshell32 -ladvapi32 -static-libgcc -static-libstdc++ -static
 CFLAGS_cli := -DFLIPS_CLI
 
 CFLAGS_G = -fno-rtti -fno-exceptions -DNDEBUG -Wall
@@ -92,7 +92,7 @@ ifeq ($(TARGET),gtk)
 endif
 
 $(FNAME_$(TARGET)): $(SOURCES) $(XFILES)
-	$(CXX) $^ -std=c++98 $(CFLAGS_G) $(MOREFLAGS) $(CPPFLAGS) $(CFLAGS) $(CXXFLAGS) $(LFLAGS) -o$@
+	$(CXX) $^ -std=c++98 $(CFLAGS_G) $(MOREFLAGS) $(CPPFLAGS) $(CFLAGS) $(CXXFLAGS) $(LFLAGS) -o $@
 ifeq ($(CFLAGS),-g)
 	echo 'Compiled Floating IPS in debug mode; for better performance, use ./make.sh instead'
 endif
